@@ -1,0 +1,15 @@
+# Test:
+#   bazel build --check_visibility=false --linkopt=-Wl,-no_fixup_chains --features=-supports_dynamic_linker --proto_toolchain_for_javalite=//bazel:jupblite_toolchain --sandbox_debug --verbose_failures //java/test:TinyProtoTest && bazel-bin/java/test/TinyProtoTest
+java_test(
+    name = "TinyProtoTest",
+    srcs = ["TinyProtoTest.java"],
+    data = ["//java/runtime/main/jupb/jni:libjavaupbruntime.dylib"],
+    jvm_flags = ["-Djava.library.path=$${RUNPATH}/java/runtime/main/jupb/jni"],
+    test_class = "TinyProtoTest",
+    deps = [
+        "//:tiny_jupb_proto",
+        "//java/runtime/main/jupb",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)

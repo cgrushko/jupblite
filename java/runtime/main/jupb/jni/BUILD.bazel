@@ -1,0 +1,31 @@
+cc_library(
+    name = "javaupbruntime-lib",
+    srcs = glob(["*.cpp"]),
+    hdrs = glob(["*.h"]),
+    includes = [
+        "../external/local_jdk/include",
+        "../external/local_jdk/include/darwin",
+    ],
+    visibility = [
+        "//java/runtime/main/jupb:__pkg__",
+        "//java/runtime/test/jupb:__pkg__",
+    ],
+    deps = [
+        "//:jni_headers",
+        "@com_google_protobuf//upb/message:internal",
+        "@com_google_protobuf//upb/message:copy",
+        "@com_google_protobuf//upb/wire",
+        "@com_google_protobuf//upb/mini_descriptor",
+    ],
+    alwayslink = True,
+)
+
+cc_binary(
+    name = "libjavaupbruntime.dylib",
+    linkshared = 1,
+    visibility = [
+        "//java/runtime/main/jupb:__pkg__",
+        "//java/runtime/test/jupb:__pkg__",
+    ],
+    deps = [":javaupbruntime-lib"],
+)

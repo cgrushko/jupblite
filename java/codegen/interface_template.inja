@@ -1,0 +1,22 @@
+{# Copyright 2024 Carmi Grushko.  All rights reserved.
+
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file. #}
+
+{% if message.deprecated %}@java.lang.Deprecated{% endif %}
+public interface {{message.Classname}}OrBuilder {
+
+## for field in message.fields
+## if field.kind == "singular_primitive" or field.kind == "singular_message"
+  {% if field.deprecated %}@java.lang.Deprecated{% endif %}
+  {{field.type}} get{{field.name}}();
+
+## if field.has_presence
+  {% if field.deprecated %}@java.lang.Deprecated{% endif %}
+  boolean has{{field.name}}();
+## endif
+## endif
+
+## endfor
+
+}

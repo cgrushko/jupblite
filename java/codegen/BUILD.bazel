@@ -1,0 +1,26 @@
+UPB_DEFAULT_CPPOPTS = [
+    "-Wextra",
+    # "-Wshorten-64-to-32",  # not in GCC (and my Kokoro images doesn't have Clang)
+    "-Wno-unused-parameter",
+    "-Wno-long-long",
+]
+
+LINKOPTS = ["-framework CoreFoundation"]
+
+cc_binary(
+    name = "protoc-gen-jupb",
+    srcs = ["protoc-gen-jupb.cc", "helpers.cc", "helpers.h"],
+    copts = UPB_DEFAULT_CPPOPTS,
+    data = glob(["*.inja"]),
+    linkopts = LINKOPTS,
+    visibility = ["//visibility:public"],
+    deps = [
+        "//inja-3.4.0:inja",
+        "@com_google_protobuf//upb_generator:plugin",
+        "@com_google_protobuf//upb_generator:file_layout",
+        "@com_google_protobuf//src/google/protobuf/compiler:code_generator",
+        "@com_google_protobuf//src/google/protobuf/compiler/java:names",
+        "@com_google_protobuf//upb/util:def_to_proto",
+        "@bazel_tools//tools/cpp/runfiles",
+    ],
+)

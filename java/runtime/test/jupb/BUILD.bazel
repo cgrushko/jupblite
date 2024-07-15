@@ -1,0 +1,29 @@
+# Test:
+#  bazel build //java/runtime/test/jupb:ArenaTest && bazel-bin/java/runtime/test/jupb/ArenaTest
+java_test(
+    name = "ArenaTest",
+    srcs = ["ArenaTest.java"],
+    data = ["//java/runtime/main/jupb/jni:libjavaupbruntime.dylib"],
+    jvm_flags = ["-Djava.library.path=$${RUNPATH}/java/runtime/main/jupb/jni"],
+    test_class = "jupb.ArenaTest",
+    deps = [
+        "//java/runtime/main/jupb",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)
+
+# Test:
+#  bazel build //java/runtime/test/jupb:MessagesTest && bazel-bin/java/runtime/test/jupb/MessagesTest
+java_test(
+    name = "MessagesTest",
+    srcs = ["MessagesTest.java"],
+    data = ["//java/runtime/main/jupb/jni:libjavaupbruntime.dylib"],
+    jvm_flags = ["-Djava.library.path=$${RUNPATH}/java/runtime/main/jupb/jni"],
+    test_class = "jupb.MessagesTest",
+    deps = [
+        "//java/runtime/main/jupb",
+        "@maven//:com_google_truth_truth",
+        "@maven//:junit_junit",
+    ],
+)

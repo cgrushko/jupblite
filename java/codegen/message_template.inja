@@ -1,0 +1,78 @@
+{# Copyright 2024 Carmi Grushko.  All rights reserved.
+
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file. #}
+
+{% if message.deprecated %}@java.lang.Deprecated{% endif %}
+public static final class {{message.Classname}}
+    extends jupb.JupbMessageLite
+    implements {{message.Classname}}OrBuilder {
+
+  private static final {{message.Classname}} DEFAULT_INSTANCE = new {{message.Classname}}(jupb.Arena.getDefaultInstanceArena());
+
+  private {{message.Classname}}(jupb.Arena arena) {
+    super(arena, "{{message.mini_descriptor}}"
+      {% for msg_to_link in message.message_types_to_link %} 
+        , {{msg_to_link.index}}, {{msg_to_link.classname}}.getDefaultInstance() 
+      {% endfor %}
+      );
+  }
+
+## for field in message.fields
+  {% if field.kind == "singular_primitive" %}
+    @java.lang.Override {% if field.deprecated %}@java.lang.Deprecated{% endif %}
+    public {{field.type}} get{{field.name}}() {
+      {% if field.has_presence %}
+        {% if existsIn(field, "default") %}
+            return jupb.Messages.{{field.getter}}(pointer, {{field.offset32}}, {{field.offset64}}, {{field.hasbit_offset32}}, {{field.hasbit_offset64}}, {{field.hasbit_mask32}}, {{field.hasbit_mask64}}, {{field.default}});
+        {% else %}
+            return jupb.Messages.{{field.getter}}(pointer, {{field.offset32}}, {{field.offset64}});
+        {% endif %}
+      {% endif %}
+    }
+
+  {% endif %}
+
+{% if field.kind == "singular_message" %}
+  @java.lang.Override {% if field.deprecated %}@java.lang.Deprecated{% endif %}
+  public {{field.type}} get{{field.name}}() {
+    return super.{{field.getter}}({{field.offset32}}, {{field.offset64}}, {{field.default}});
+  }
+{% endif %}
+
+## if (field.kind == "singular_primitive" or field.kind == "singular_message") and field.has_presence
+  @java.lang.Override {% if field.deprecated %}@java.lang.Deprecated{% endif %}
+  public boolean has{{field.name}}() {
+    return jupb.Messages.getHasBit(pointer, {{field.hasbit_offset32}}, {{field.hasbit_offset64}}, {{field.hasbit_mask32}}, {{field.hasbit_mask64}});
+  }
+## endif
+
+
+## endfor
+
+  public static {{message.Classname}} getDefaultInstance() {
+    return DEFAULT_INSTANCE;
+  }
+
+  public static Builder newBuilder(jupb.Arena arena) {
+    return new Builder(arena, DEFAULT_INSTANCE);
+  }
+
+  public Builder toBuilder(jupb.Arena arena) {
+    return new Builder(arena, this);
+  }
+
+  public static {{message.Classname}} parseFrom(jupb.Arena arena, byte[] buf) 
+      throws jupb.ProtocolBufferDecodingException {
+    {{message.Classname}} result = new {{message.Classname}}(arena);
+    jupb.Messages.decodeMessage(buf, result);
+    return result;
+  }
+
+	{{subtemplate("message_builder_template.inja", "message", message)}}
+
+  {% for nested_message in message.nested_messages %}
+    {{subtemplate("interface_template.inja", "message", nested_message)}}
+    {{subtemplate("message_template.inja", "message", nested_message)}}
+  {% endfor %}
+}

@@ -1,0 +1,42 @@
+{# Copyright 2024 Carmi Grushko.  All rights reserved.
+
+Use of this source code is governed by a BSD-style
+license that can be found in the LICENSE file. #}
+
+{% if message.deprecated %}@java.lang.Deprecated{% endif %}
+public static final class Builder 
+    extends jupb.JupbMessageLite.Builder<{{message.Classname}}>
+    implements {{message.Classname}}OrBuilder {
+
+  private Builder(jupb.Arena arena, {{message.Classname}} instance) {
+    super(arena, instance);
+  }
+
+
+## for field in message.fields
+## if field.kind == "singular_primitive" or field.kind == "singular_message"
+  @java.lang.Override {% if field.deprecated %}@java.lang.Deprecated{% endif %}
+  public {{field.type}} get{{field.name}}() {
+    return instance.get{{field.name}}();
+  }
+
+  {% if field.deprecated %}@java.lang.Deprecated{% endif %}
+  public Builder set{{field.name}}({{field.type}} value) {
+## if field.has_presence
+    super.{{field.setter}}({{field.offset32}}, {{field.offset64}}, {{field.hasbit_offset32}}, {{field.hasbit_offset64}}, {{field.hasbit_mask32}}, {{field.hasbit_mask64}}, value);
+## else
+    super.{{field.setter}}({{field.offset32}}, {{field.offset64}}, value);
+## endif        
+    return this;
+  }
+
+## if field.has_presence
+  @java.lang.Override {% if field.deprecated %}@java.lang.Deprecated{% endif %}
+  public boolean has{{field.name}}() {
+    return instance.has{{field.name}}();
+  }
+## endif
+## endif
+
+## endfor
+}

@@ -1,0 +1,7 @@
+java_library(
+    name = "jupb",
+    srcs = glob(["*.java"]),
+    # runtime_deps = ["//java/runtime/main/com/facebook/upb/runtime/jni:javaupbruntime"],
+    # data = ["//java/runtime/main/com/facebook/upb/runtime/jni:javaupbruntime"],
+    visibility = ["//visibility:public"],
+)

@@ -1,0 +1,21 @@
+syntax = "proto2";
+
+package upb_test;
+
+message BabySteps {
+  repeated int32 rep1 = 1;
+  repeated int32 rep2 = 2;
+  optional int32 foo = 3 [default = 43];
+  optional int64 bar = 4;
+
+  optional Submessage submsg = 5;
+
+  optional EmbeddedMessage embedded = 6;
+  message EmbeddedMessage {
+    optional int64 x = 1;
+  }
+}
+
+message Submessage {
+  optional int32 baz = 1;
+}
